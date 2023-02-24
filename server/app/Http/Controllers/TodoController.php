@@ -76,6 +76,7 @@ class TodoController extends Controller
     {
         try {
             $todo->delete_flag = true;
+            $todo->updated_by = Auth::id();
             $todo->save();
             return $this->jsonResponse(1, null, 'Task Removed', null, 200);
         } catch (\Exception $e) {
