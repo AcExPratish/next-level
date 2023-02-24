@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 use App\Http\Traits\JSONResponseTrait;
 
@@ -45,7 +47,11 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->renderable(function (NotFoundHttpException $e, $request) {
+        $this->renderable(function (MethodNotAllowedHttpException $exception) {
+            return $this->jsonResponse(0, null, 'Method not allowed', null, 405);
+        });
+
+        $this->renderable(function (NotFoundHttpException $exception, $request) {
             if ($request->is('api/*')) {
                 return $this->jsonResponse(0, null, 'Route not found', null, 404);
             }
